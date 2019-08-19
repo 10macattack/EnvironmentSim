@@ -42,10 +42,9 @@ def Mating(CURRENT_GENERATION, SPECIES_LIST, SPECIES, RANGE_LOW, RANGE_HIGH, MAT
     MATABLE = []
 
 
-def OldAge(SPECIES_LIST, AGE_OF_DEATH, VALUE):
+def OldAge(SPECIES_LIST, AGE_OF_DEATH):
     SPARE_LIST = []
     for i in SPECIES_LIST:
-        FunctionCounter(VALUE)
         if i['Age'] >= AGE_OF_DEATH:
             i.update({'Death Cause': 'Old Age'})
             i['Dead'] = True
@@ -123,7 +122,7 @@ def Infection(CreatureList, Min_Pollution, MESSAGE, DISEASE):
 
 
 def InfectionSpread(CreatureList):
-    SPREAD_CHANCE = random.randint(1, 10)
+    SPREAD_CHANCE = random.randint(1, 3)
     for i in CreatureList:
         if i['Infected'] == True:
             for i in range(SPREAD_CHANCE):
@@ -135,7 +134,7 @@ def InfectionKill(CreatureList):
     SPARE_LIST = []
     for i in CreatureList:
         if i['Infected'] == True:
-            DIE_CHANCE = random.randint(1, 4)
+            DIE_CHANCE = random.randint(1, 20)
             if DIE_CHANCE == 2:
                 SPARE_LIST.append(i)
     for i in SPARE_LIST:
@@ -156,6 +155,11 @@ def Animal(SPECIES_LIST,MATURE_AGE,CURRENT_GENERATION,NAME,MIN_RANGE,MAX_RANGE,M
     Infection(FOX_LIST, MIN_POLLUTION, MESSAGE, DISEASE)
     InfectionSpread(SPECIES_LIST)
 
+def AnimalDeath(SPECIES_LIST,AGE_OF_DEATH):
+    Starvation(SPECIES_LIST)
+    OldAge(SPECIES_LIST, AGE_OF_DEATH)
+    InfectionKill(SPECIES_LIST)
+
 
 MATING_VALUE = 0
 
@@ -174,7 +178,7 @@ RABBIT = {}
 FOX = {}
 INIT_FOX_POP = 100
 INIT_RABBIT_POP = 1000
-FORESTRY = 25000
+FORESTRY = 250000
 GENERATIONS = 16
 GENDER = ('Male', 'Female')
 x = 0
@@ -184,7 +188,8 @@ print('Initial Population Details:')
 print(f'Original Fox Population: {INIT_FOX_POP}')
 for i in FOX_LIST:
     ORIGINAL_FAVORABILITY.append(i['Survivability'])
-print(f'Original Fox Favorability:{sum(ORIGINAL_FAVORABILITY)/len(ORIGINAL_FAVORABILITY)}')
+if len(FOX_LIST) != 0:
+    print(f'Original Fox Favorability:{sum(ORIGINAL_FAVORABILITY)/len(ORIGINAL_FAVORABILITY)}')
 
 print(f'Original Rabbit Population: {INIT_RABBIT_POP}')
 print(f'Original Forestry:{FORESTRY}')
@@ -200,22 +205,18 @@ for i in range(INIT_RABBIT_POP):
 GENERATION_LIST = []
 for i in range(GENERATIONS):
     CURRENT_GENERATION = i + 1
-    
+    TOTAL_RABBITS = len(RABBIT_LIST)
+    TOTAL_FOXES = len(FOX_LIST)  
+   
     Animal(FOX_LIST,3,CURRENT_GENERATION,'FOX',2,7,FOX_MATE,Min_Pollution,MESSAGE,DISEASE)
     Animal(RABBIT_LIST,2,CURRENT_GENERATION,'RABBIT',6,12,RABBIT_MATE,Min_Pollution,MESSAGE,DISEASE)
 
-    # Foxes
-    TOTAL_RABBITS = len(RABBIT_LIST)
-    TOTAL_FOXES = len(FOX_LIST)
 
     Hunting(FOX_LIST, RABBIT_LIST, FORESTRY)
     FORESTRY = Eating(RABBIT_LIST, FORESTRY)
-    Starvation(RABBIT_LIST)
-    Starvation(FOX_LIST)
-    OldAge(FOX_LIST, 6, MATING_VALUE)
-    OldAge(RABBIT_LIST, 4, MATING_VALUE)
-    InfectionKill(FOX_LIST)
-    InfectionKill(RABBIT_LIST)
+
+    AnimalDeath(RABBIT_LIST,4)
+    AnimalDeath(FOX_LIST,6)
 
     FOREST_GROWTH = random.uniform(1, 2)
 
@@ -228,23 +229,17 @@ for i in range(GENERATIONS):
     NET_RABBIT_CHANGE = len(RABBIT_LIST)-TOTAL_RABBITS
 
     print(f'there is {TOTAL_FOXES} foxes in generation {CURRENT_GENERATION}')
-    print(
-        f'there is {TOTAL_RABBITS} rabbits in generation {CURRENT_GENERATION}')
+    print(f'there is {TOTAL_RABBITS} rabbits in generation {CURRENT_GENERATION}')
+
+
     print(f'There is {FORESTRY} forestry')
+    
     RABBIT_HUNGER_LIST = []
     FOX_HUNGER_LIST = []
     for l in FOX_LIST:
         FOX_HUNGER_LIST.append(l['Hunger'])
     for p in RABBIT_LIST:
         RABBIT_HUNGER_LIST.append(p['Hunger'])
-    if FOX_LIST and RABBIT_LIST:
-        print(
-            f'The average hunger of foxes in generation {CURRENT_GENERATION} is : {sum(FOX_HUNGER_LIST)/len(FOX_HUNGER_LIST)}')
-        print(
-            f'The average hunger of rabbits in generation {CURRENT_GENERATION} is : {sum(RABBIT_HUNGER_LIST)/len(RABBIT_HUNGER_LIST)}')
-        print(
-            f'The number of rabbits hunted in generation {CURRENT_GENERATION} is {len(HUNTED_LIST)}')
-
     print('')
 
     print(f'Net change in foxes = {NET_FOX_CHANGE}')
@@ -278,7 +273,7 @@ ANIMAL_LIST = FOX_LIST + RABBIT_LIST
 
 PICKING = True
 while PICKING:
-    CHOICE_ONE== = input('Would you like to sort through the Animals? ')
+    CHOICE_ONE = input('Would you like to sort through the Animals? ')
     if CHOICE_ONE == 'YES':
         CHOICE_TWO = input('Which Animal? ')
         if CHOICE_TWO == 'Fox':
