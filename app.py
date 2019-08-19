@@ -180,6 +180,7 @@ GENDER = ('Male', 'Female')
 x = 0
 
 print('Initial Population Details:')
+
 print(f'Original Fox Population: {INIT_FOX_POP}')
 for i in FOX_LIST:
     ORIGINAL_FAVORABILITY.append(i['Survivability'])
@@ -192,9 +193,7 @@ print('')
 
 for i in range(INIT_FOX_POP):
     FOX_LIST.append(CreatureCreator(NUMBER, 'FOX'))
-for i in FOX_LIST:
-    ORIGINAL_FAVORABILITY.append(i['Survivability'])
-print(f'Original Fox Favorability:{sum(ORIGINAL_FAVORABILITY)/len(ORIGINAL_FAVORABILITY)}')
+
 for i in range(INIT_RABBIT_POP):
     RABBIT_LIST.append(CreatureCreator(NUMBER, 'RABBIT'))
 
@@ -279,8 +278,8 @@ ANIMAL_LIST = FOX_LIST + RABBIT_LIST
 
 PICKING = True
 while PICKING:
-    CHOICE_ONE = input('Would you like to sort through the Animals? ')
-    if CHOICE_ONE == 'Yes' or CHOICE_ONE == 'yes':
+    CHOICE_ONE== = input('Would you like to sort through the Animals? ')
+    if CHOICE_ONE == 'YES':
         CHOICE_TWO = input('Which Animal? ')
         if CHOICE_TWO == 'Fox':
             while CHOICE_TWO != 'Back':
