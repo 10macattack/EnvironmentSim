@@ -1,9 +1,7 @@
 import random
 
-
 def FunctionCounter(value):
     value += 1
-
 
 def CreatureCreator(CURRENT_GENERATION, SPECIES):
     CREATURE = {}
@@ -15,6 +13,9 @@ def CreatureCreator(CURRENT_GENERATION, SPECIES):
                 'Hunger': CREATURE_HUNGER, 'Dead': False, 'Generation': CURRENT_GENERATION, 'Infected': False, 'Maturity':'GEN'}
     return CREATURE
 
+def InitMaker(INIT_SPECIES_POP,SPECIES_LIST,CURRENT_GENERATION,NAME):
+    for _ in range(INIT_SPECIES_POP):
+        SPECIES_LIST.append(CreatureCreator(CURRENT_GENERATION, NAME))
 
 def Mating(CURRENT_GENERATION, SPECIES_LIST, SPECIES, RANGE_LOW, RANGE_HIGH, MATE_COUNTER):
     MATABLE = []
@@ -84,8 +85,8 @@ def Hunting(PREDATOR, PREY, FORESTRY):
 def Eating(PREY, FORESTRY):
     for i in PREY:
         if FORESTRY >= 0:
-            i['Hunger'] += 1
-            FORESTRY -= 1
+            i['Hunger'] += 2
+            FORESTRY -= 4
         else:
             i['Hunger'] -= 10
     return FORESTRY
@@ -181,9 +182,13 @@ INIT_RABBIT_POP = 1000
 FORESTRY = 250000
 GENERATIONS = 16
 GENDER = ('Male', 'Female')
+CURRENT_GENERATION = 0
 x = 0
 
 print('Initial Population Details:')
+
+InitMaker(INIT_FOX_POP,FOX_LIST,CURRENT_GENERATION,'Fox')
+InitMaker(INIT_RABBIT_POP,RABBIT_LIST,CURRENT_GENERATION,'Rabbit')
 
 print(f'Original Fox Population: {INIT_FOX_POP}')
 for i in FOX_LIST:
@@ -196,15 +201,9 @@ print(f'Original Forestry:{FORESTRY}')
 print(f'Amount of Generations: {GENERATIONS}')
 print('')
 
-for i in range(INIT_FOX_POP):
-    FOX_LIST.append(CreatureCreator(NUMBER, 'FOX'))
-
-for i in range(INIT_RABBIT_POP):
-    RABBIT_LIST.append(CreatureCreator(NUMBER, 'RABBIT'))
-
 GENERATION_LIST = []
 for i in range(GENERATIONS):
-    CURRENT_GENERATION = i + 1
+    CURRENT_GENERATION += 1
     TOTAL_RABBITS = len(RABBIT_LIST)
     TOTAL_FOXES = len(FOX_LIST)  
    
