@@ -66,17 +66,14 @@ def Hunting(PREDATOR, PREY, FORESTRY):
             i['Hunger'] -= 10
         for j in PREY:
             if i['Hunger'] <= 10 and i['Hunger'] >= -10 and i['Maturity'] == 'Adult':
-                FOUND_CHANCE = random.randint(1, 100)
-                if FOUND_CHANCE < 50:
+                PREY_POP = len(PREY)
+                FOUND_CHANCE = random.randint(1, PREY_POP)
+                if FOUND_CHANCE < 270:
                     if j['Survivability'] < i['Survivability']:
-                        i['Hunger'] = i['Hunger'] + 3
+                        i['Hunger'] = i['Hunger'] + 1
                         j['Dead'] = True
                         j.update({'Death Cause': 'Hunted'})
                         SPARE_LIST.append(j)
-                    else:
-                        i['Hunger'] -= 1
-                else:
-                    i['Hunger'] = - 1
     for i in SPARE_LIST:
         if i in PREY:
             PREY.remove(i)
@@ -85,23 +82,22 @@ def Hunting(PREDATOR, PREY, FORESTRY):
 def Eating(PREY, FORESTRY):
     for i in PREY:
         if FORESTRY >= 0:
-            i['Hunger'] += 2
+            i['Hunger'] += 4
             FORESTRY -= 4
-        else:
-            i['Hunger'] -= 10
+
     return FORESTRY
 
 
 def Hunger_Reset(Species):
     for i in Species:
-        if i['Hunger'] >= 2:
-            i['Hunger'] = 2
+        if i['Hunger'] > 0:
+            i['Hunger'] = 0
 
 
-def Starvation(CreatureList):
+def Starvation(CreatureList,FOOD_SUPPLY):
     SPARE_LIST = []
     for i in CreatureList:
-        if i['Hunger'] <= 0:
+        if i['Hunger'] <= FOOD_SUPPLY:
             i.update({'Death Age': i['Age']})
             i.update({'Death Cause': 'Starvation'})
             i['Dead'] = True
@@ -113,10 +109,11 @@ def Starvation(CreatureList):
 def Infection(CreatureList, Min_Pollution, MESSAGE, DISEASE):
     for i in CreatureList:
         INFECT_CHANCE = random.randint(Min_Pollution, 10000)
-        if INFECT_CHANCE >= 9995:
+        if INFECT_CHANCE >= 9999:
             i['Infected'] = True
             DISEASE = True
-            if MESSAGE == True:
+            if MESSAGE:
+                print('Disease has spread!')
                 MESSAGE = False
         else:
             DISEASE = False
@@ -156,8 +153,8 @@ def Animal(SPECIES_LIST,MATURE_AGE,CURRENT_GENERATION,NAME,MIN_RANGE,MAX_RANGE,M
     Infection(FOX_LIST, MIN_POLLUTION, MESSAGE, DISEASE)
     InfectionSpread(SPECIES_LIST)
 
-def AnimalDeath(SPECIES_LIST,AGE_OF_DEATH):
-    Starvation(SPECIES_LIST)
+def AnimalDeath(SPECIES_LIST,AGE_OF_DEATH,FOOD_SUPPLY):
+    Starvation(SPECIES_LIST,FOOD_SUPPLY)
     OldAge(SPECIES_LIST, AGE_OF_DEATH)
     InfectionKill(SPECIES_LIST)
 
@@ -177,10 +174,10 @@ RABBIT_LIST = []
 ORIGINAL_FAVORABILITY = []
 RABBIT = {}
 FOX = {}
-INIT_FOX_POP = 100
-INIT_RABBIT_POP = 1000
+INIT_FOX_POP = 10
+INIT_RABBIT_POP = 100
 FORESTRY = 250000
-GENERATIONS = 16
+GENERATIONS = 12
 GENDER = ('Male', 'Female')
 CURRENT_GENERATION = 0
 x = 0
@@ -214,14 +211,14 @@ for i in range(GENERATIONS):
     Hunting(FOX_LIST, RABBIT_LIST, FORESTRY)
     FORESTRY = Eating(RABBIT_LIST, FORESTRY)
 
-    AnimalDeath(RABBIT_LIST,4)
-    AnimalDeath(FOX_LIST,6)
+    AnimalDeath(RABBIT_LIST,4,4)
+    AnimalDeath(FOX_LIST,6,100)
 
-    FOREST_GROWTH = random.uniform(1, 2)
+    FOREST_GROWTH = random.uniform(2,4)
 
-    if FORESTRY <= 2000:
-        FORESTRY = FORESTRY + 750
-    if FORESTRY <= 20000:
+    if FORESTRY <= 5000:
+        FORESTRY = FORESTRY + 2500
+    if FORESTRY <= 70000:
         FORESTRY = int(FORESTRY * FOREST_GROWTH)
 
     NET_FOX_CHANGE = len(FOX_LIST)-TOTAL_FOXES
@@ -261,19 +258,20 @@ for l in FOX_LIST:
     FOX_FAVORABILITY_LIST.append(l['Survivability'])
 for p in RABBIT_LIST:
     RABBIT_HUNGER_LIST.append(p['Hunger'])
-if FOX_LIST and RABBIT_LIST:
+if FOX_LIST:
     print(f'the final average hunger of foxes  is : {sum(FOX_HUNGER_LIST)/len(FOX_HUNGER_LIST)}')
-    print(f'the final average hunger of rabbits is : {sum(RABBIT_HUNGER_LIST)/len(RABBIT_HUNGER_LIST)}')
     print(f'Final Fox Favorability = {sum(FOX_FAVORABILITY_LIST)/len(FOX_FAVORABILITY_LIST)}')
-    print(f'The amount of Rabbit\'s born is :{RABBIT_MATE}')
     print(f'The amount of Foxes\'s born is {FOX_MATE}')
 
+if RABBIT_LIST:
+    print(f'the final average hunger of rabbits is : {sum(RABBIT_HUNGER_LIST)/len(RABBIT_HUNGER_LIST)}')
+    print(f'The amount of Rabbit\'s born is :{RABBIT_MATE}')
 ANIMAL_LIST = FOX_LIST + RABBIT_LIST
 
 PICKING = True
 while PICKING:
     CHOICE_ONE = input('Would you like to sort through the Animals? ')
-    if CHOICE_ONE == 'YES':
+    if CHOICE_ONE == 'Yes':
         CHOICE_TWO = input('Which Animal? ')
         if CHOICE_TWO == 'Fox':
             while CHOICE_TWO != 'Back':
