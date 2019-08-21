@@ -167,7 +167,6 @@ Min_Pollution = random.randint(1, 2000)
 print(f'Min Pollution:{Min_Pollution}')
 MESSAGE = True
 DISEASE = False
-HUNTED_LIST = []
 NUMBER = 1
 FOX_MATE = 0
 RABBIT_MATE = 0
@@ -247,7 +246,6 @@ for i in range(GENERATIONS):
     print('')
     RABBIT_HUNGER_LIST = []
     FOX_HUNGER_LIST = []
-    HUNTED_LIST = []
 
 
 RABBIT_HUNGER_LIST = []
