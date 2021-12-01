@@ -1,3 +1,4 @@
+#NOTE: This is an old version where I was just begining to program, it is NOT a good representation of my current programming skills. See EnviromentSim.py for an update version.
 import random
 
 def FunctionCounter(value):
